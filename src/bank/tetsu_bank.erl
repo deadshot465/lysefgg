@@ -122,6 +122,7 @@ negotiate(EventType, Event, State) ->
     keep_state_and_data.
 
 %% Wait state
+-spec wait(_, _, _) -> 'keep_state_and_data' | {'next_state', 'negotiate' | 'ready', #state{from::{pid(), _}}}.
 wait(cast, {do_offer, Item}, State=#state{other_items=OtherItems}) ->
     gen_statem:reply(State#state.from, offer_changed),
     notice(State, "other side offering ~p", [Item]),
@@ -152,6 +153,7 @@ wait(_, Event, _) ->
     unexpected(Event, wait),
     keep_state_and_data.
 
+-spec ready(_, _, _) -> 'keep_state_and_data' | {'keep_state_and_data', {'reply', _, 'ready_commit'}} | {'stop', 'normal' | {_, _}, #state{other::pid()}} | {'stop_and_reply', 'normal', {'reply', _, 'ok'}, #state{}}.
 ready(cast, ack, State=#state{other=OtherPid}) ->
     case priority(self(), OtherPid) of
         true ->
