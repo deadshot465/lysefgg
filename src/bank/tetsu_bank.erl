@@ -176,10 +176,10 @@ ready({call, From}, ask_commit, State) ->
     notice(State, "replying to ask_commit", []),
     {keep_state_and_data, {reply, From, ready_commit}};
 
-ready({call, _From}, do_commit, State) ->
+ready({call, From}, do_commit, State) ->
     notice(State, "committing...", []),
     commit(State),
-    {stop, normal, State};
+    {stop_and_reply, normal, {reply, From, ok}, State};
 
 ready(_, Event, _) ->
     unexpected(Event, ready),
