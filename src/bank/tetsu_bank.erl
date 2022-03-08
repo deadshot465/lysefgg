@@ -1,7 +1,7 @@
 -module(tetsu_bank).
 -behaviour(gen_statem).
 -export([start/1, start_link/1, trade/2, accept_trade/1, make_offer/2, retract_offer/2, ready/1, cancel/1]).
--export([init/1, callback_mode/0]).
+-export([init/1, callback_mode/0, idle/3, idle_wait/3, negotiate/3, wait/3, ready/3, code_change/4, terminate/3]).
 -record(state, {name="", other, own_items=[], other_items=[], monitor, from}).
 
 -spec start(_) -> 'ignore' | {'error', _} | {'ok', pid()}.
@@ -133,7 +133,7 @@ wait(cast, {undo_offer, Item}, State=#state{other_items=OtherItems}) ->
     {next_state, negotiate, State#state{other_items=remove(Item, OtherItems)}};
 
 wait(cast, are_you_ready, State=#state{other=OtherPid}) ->
-    gen_statem:cast(OtherPid, 'ready!'),
+    gen_statem:cast(OtherPid, ready),
     notice(State, "asked if ready, and I am. Waiting for same reply", []),
     keep_state_and_data;
 
@@ -141,8 +141,8 @@ wait(cast, not_yet, State=#state{}) ->
     notice(State, "other side not ready yet", []),
     keep_state_and_data;
 
-wait(cast, 'ready!', State=#state{}) ->
-    gen_statem:cast(State#state.other, 'ready!'),
+wait(cast, ready, State=#state{}) ->
+    gen_statem:cast(State#state.other, ready),
     gen_statem:cast(State#state.other, ack),
     gen_statem:reply(State#state.from, ok),
     notice(State, "other side is ready. Moving to ready state", []),
@@ -179,7 +179,7 @@ ready({call, From}, ask_commit, State) ->
 ready({call, _From}, do_commit, State) ->
     notice(State, "committing...", []),
     commit(State),
-    {stop, normal, ok, State};
+    {stop, normal, State};
 
 ready(_, Event, _) ->
     unexpected(Event, ready),
