@@ -2,6 +2,7 @@
 -behaviour(supervisor).
 -export([start_link/1, init/1]).
 
+-spec start_link({_, _, _}) -> 'ignore' | {'error', _} | {'ok', pid()}.
 start_link(MFA = {_, _, _}) ->
     supervisor:start_link(?MODULE, MFA).
 
