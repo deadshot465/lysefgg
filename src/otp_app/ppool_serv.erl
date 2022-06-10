@@ -18,6 +18,3 @@ async_queue(Name, Args) ->
 
 stop(Name) ->
     gen_server:call(Name, stop).
-
-do_nothing() ->
-    nothing.
