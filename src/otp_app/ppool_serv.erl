@@ -18,3 +18,6 @@ async_queue(Name, Args) ->
 
 stop(Name) ->
     gen_server:call(Name, stop).
+
+test_signing() ->
+    nothing.
