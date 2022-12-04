@@ -1,0 +1,15 @@
+{application, pool_otp,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, [ppool]},
+  {mod, {ppool, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["Apache-2.0"]},
+  {links, []}
+ ]}.
