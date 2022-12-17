@@ -1,5 +1,5 @@
 {application, pool_otp,
- [{description, "An OTP application"},
+ [{description, "Run and enqueue different concurrent tasks"},
   {vsn, "0.1.0"},
   {registered, [ppool]},
   {mod, {ppool, []}},

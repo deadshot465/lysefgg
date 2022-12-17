@@ -15,7 +15,7 @@
 -export([start_link/0, complete/4]).
 
 %% gen_statem callbacks
--export([init/1, format_status/2, dispatching/3, handle_event/4, terminate/3,
+-export([init/1, format_status/2, dispatching/3, listening/3, handle_event/4, terminate/3,
   code_change/4, callback_mode/0]).
 
 -define(POOL, erlcount).
@@ -78,6 +78,7 @@ format_status(_Opt, [_PDict, _StateName, _State]) ->
 %% functions is called when gen_statem receives and event from
 %% call/2, cast/2, or as a normal process message.
 dispatching(info, {start, Dir}, Data) ->
+  io:format("Reading ~p...~n", [Dir]),
   gen_statem:cast(self(), erlcount_lib:find_erl(Dir)),
   {next_state, dispatching, Data};
 
@@ -130,7 +131,7 @@ handle_event(EventType, EventContent, State, Data) ->
 %% necessary cleaning up. When it returns, the gen_statem terminates with
 %% Reason. The return value is ignored.
 terminate(_Reason, _State, _Data) ->
-  ok.
+  init:stop().
 
 %% @private
 %% @doc Convert process state when code is changed

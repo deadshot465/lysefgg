@@ -29,6 +29,7 @@ regex_count(Re, Str) ->
 %% Dispatches based on file type
 -spec find_erl(string() | binary() | #file_descriptor{module :: atom()}, queue:queue(_)) -> 'done' | {'continue', string() | binary(), fun(() -> 'done' | {_, _, _})}.
 find_erl(Name, Queue) ->
+  io:format("Finding Erlang files in ~p...~n", [Name]),
   case file:read_file_info(Name) of
     {ok, F = #file_info{}} ->
       case F#file_info.type of
@@ -37,7 +38,9 @@ find_erl(Name, Queue) ->
         _Other -> dequeue_and_run(Queue)
       end;
 
-    {error, _} -> dequeue_and_run(Queue)
+    {error, Reason} ->
+      io:format("No entry for ~p. Reason: ~p~n", [Name, Reason]),
+      dequeue_and_run(Queue)
   end.
 
 %% Opens directories and enqueues files in there
