@@ -10,6 +10,7 @@
 
 -export([start_link/0, init/1]).
 
+-spec start_link() -> 'ignore' | {'error', _} | {'ok', pid()}.
 start_link() ->
   supervisor:start_link(?MODULE, []).
 
